@@ -98,29 +98,20 @@ def run_geneb_evaluation(
     if limit:
         cmd.extend(["--limit", str(limit)])
 
-    # Set model_path and mode as environment variables for extractor to read
     env = os.environ.copy()
     if model_path:
         env["DNABERT_MODEL_PATH"] = str(model_path)
     if mode:
         env["DNABERT_MODE"] = mode
 
-    print(f"\n{'=' * 80}")
     print(f"Running: {' '.join(cmd)}")
     if model_path:
         print(f"Model path: {model_path}")
     if mode:
         print(f"Mode: {mode}")
-    print(f"{'=' * 80}\n")
-    try:
-        result = subprocess.run(cmd, env=env, text=True)
-    except OSError as exc:
-        print(f"Could not start evaluation process: {exc}", flush=True)
-        return False
+    result = subprocess.run(cmd, env=env, text=True)
 
-    if result.returncode < 0:
-        print(f"Evaluation process terminated by signal {-result.returncode}", flush=True)
-    elif result.returncode != 0:
+    if result.returncode != 0:
         print(f"Evaluation process exited with code {result.returncode}", flush=True)
     return result.returncode == 0
 
